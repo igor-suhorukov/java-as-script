@@ -33,7 +33,7 @@ public class ScriptRunnerUtils {
 
                 runScript(IOUtil.toString(scriptStream), args);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             System.exit(-1);
         }
