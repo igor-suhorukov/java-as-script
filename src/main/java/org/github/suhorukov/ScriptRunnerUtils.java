@@ -1,12 +1,43 @@
 package org.github.suhorukov;
 
+import com.github.igorsuhorukov.codehaus.plexus.util.IOUtil;
+import com.github.igorsuhorukov.url.handler.UniversalURLStreamHandlerFactory;
+
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.net.URL.setURLStreamHandlerFactory;
+
 public class ScriptRunnerUtils {
+
+    public static void main(String[] args) {
+        String scriptPath = System.getProperty("scriptPath");
+        if(scriptPath==null || scriptPath.isEmpty()){
+            throw new IllegalArgumentException("Non empty java system property 'scriptPath' are requered. Please provide '-DscriptPath='");
+        }
+        setURLStreamHandlerFactory(new UniversalURLStreamHandlerFactory());
+        URL scriptURL = null;
+        try {
+            scriptURL = new URL(scriptPath);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid format of provided scriptPath = "+scriptPath, e);
+        }
+        try {
+            try (InputStream scriptStream = scriptURL.openStream()){
+
+                runScript(IOUtil.toString(scriptStream), args);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
 
     public static void runScript(String scriptText, String[] scriptArgs)
             throws Exception {
