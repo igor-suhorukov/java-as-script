@@ -1,11 +1,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.igor-suhorukov</groupId>
     <artifactId>java-as-script</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
+    <developers>
+        <developer>
+            <name>Igor Sukhorukov</name>
+            <url>http://suhorukov.blogspot.ru</url>
+            <email>igor.suhorukov[skip this] at gmail.com</email>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>New BSD License</name>
+            <url>https://raw.githubusercontent.com/vaadin/vaadin-deps/master/licenses/licenses/new-bsd-license.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/igor-suhorukov/java-as-script.git</url>
+        <connection>scm:git:git://github.com/igor-suhorukov/java-as-script.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/igor-suhorukov/java-as-script.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
