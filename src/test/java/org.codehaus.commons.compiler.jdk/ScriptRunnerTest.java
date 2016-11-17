@@ -1,7 +1,7 @@
 package org.codehaus.commons.compiler.jdk;
 
 import com.github.igorsuhorukov.codehaus.plexus.util.IOUtil;
-import org.github.suhorukov.ScriptRunnerUtils;
+import org.github.suhorukov.ScriptRunner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -15,7 +15,7 @@ public class ScriptRunnerTest {
     public void testClassloader() throws Exception {
         valueFromScript = null;
         String scriptText = IOUtil.toString(ScriptRunnerTest.class.getResourceAsStream("/SimpleScriptWithDependency.java"));
-        ScriptRunnerUtils.runScript(scriptText, null);
+        new ScriptRunner().runScript(scriptText, null);
         assertNotNull(valueFromScript);
     }
 

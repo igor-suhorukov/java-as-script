@@ -8,44 +8,58 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.net.URL.setURLStreamHandlerFactory;
 
-public class ScriptRunnerUtils {
+public class ScriptRunner {
 
     public static void main(String[] args) {
-        String scriptPath = System.getProperty("scriptPath");
-        if(scriptPath==null || scriptPath.isEmpty()){
-            throw new IllegalArgumentException("Non empty java system property 'scriptPath' are requered. Please provide '-DscriptPath='");
-        }
-        setURLStreamHandlerFactory(new UniversalURLStreamHandlerFactory());
-        URL scriptURL = null;
         try {
-            scriptURL = new URL(scriptPath);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid format of provided scriptPath = "+scriptPath, e);
-        }
-        try {
-            try (InputStream scriptStream = scriptURL.openStream()){
-
-                runScript(IOUtil.toString(scriptStream), args);
-            }
+            new ScriptRunner().run(args);
         } catch (Throwable e) {
             e.printStackTrace();
             System.exit(-1);
         }
     }
 
-    public static void runScript(String scriptText, String[] scriptArgs)
+    protected void run(String[] args) throws Exception {
+        String[] scriptParams;
+        if(args.length>1) {
+            scriptParams = Arrays.copyOfRange(args, 1, args.length);
+            System.out.println(scriptParams.length);
+        } else {
+            scriptParams = new String[0];
+        }
+
+        String scriptPath = args.length>0 ? args[0]: null;
+        if(scriptPath==null || scriptPath.isEmpty()){
+            throw new IllegalArgumentException("Non empty script path as first java args are required. Please provide it!");
+        }
+        setURLStreamHandlerFactory(new UniversalURLStreamHandlerFactory());
+        URL scriptURL;
+        try {
+            scriptURL = new URL(scriptPath);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid format of provided script path = "+scriptPath, e);
+        }
+        try (InputStream scriptStream = scriptURL.openStream()){
+            runScript(IOUtil.toString(scriptStream), scriptParams);
+        }
+
+
+    }
+
+    public void runScript(String scriptText, String[] scriptArgs)
             throws Exception {
 
         runScript(new JavaCompiler().compileScript(scriptText), scriptArgs);
     }
 
-    public static void runScript(CompilationResult compilationResult, String[] scriptArgs) {
+    public void runScript(CompilationResult compilationResult, String[] scriptArgs) {
         try {
             runScriptInternal(compilationResult, scriptArgs);
         } catch (Exception e) {
@@ -56,10 +70,8 @@ public class ScriptRunnerUtils {
     public static void runScriptInternal(CompilationResult compilationResult, String[] scriptArgs) throws Exception {
 
         ClassLoader compilerClassLoader = compilationResult.getCompiler().getClassLoader();
-        Set<String> compiledClasses = compilationResult.getCompiler().listCompiledClasses();
         if(compilationResult.getPublicClassName().isPresent()) {
-            String fullClassName = compiledClasses.stream().filter(className ->
-                    className.endsWith(compilationResult.getPublicClassName().get())).findFirst().get();
+            String fullClassName = CompilerUtils.getFullClassName(compilationResult);
             try {
                 invokeMainMethod(compilerClassLoader.loadClass(fullClassName), scriptArgs);
             } catch (NoSuchMethodException e){
@@ -67,7 +79,7 @@ public class ScriptRunnerUtils {
                         "Script entry point is not found. Please specify psvm method for class "+fullClassName);
             }
         } else {
-            List<Class<?>> mainClasses = compiledClasses.stream().map(className -> {
+            List<Class<?>> mainClasses = compilationResult.getCompiler().listCompiledClasses().stream().map(className -> {
                 try {
                     return compilerClassLoader.loadClass(className);
                 } catch (ClassNotFoundException e) {
