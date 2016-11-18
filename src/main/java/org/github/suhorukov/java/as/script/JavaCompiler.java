@@ -1,4 +1,4 @@
-package org.github.suhorukov;
+package org.github.suhorukov.java.as.script;
 
 import com.github.igorsuhorukov.maven.DependenciesResolver;
 import com.github.igorsuhorukov.maven.MavenDependenciesResolver;

@@ -1,7 +1,7 @@
 package org.codehaus.commons.compiler.jdk;
 
 import com.github.igorsuhorukov.codehaus.plexus.util.IOUtil;
-import org.github.suhorukov.ScriptRunner;
+import org.github.suhorukov.java.as.script.ScriptRunner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

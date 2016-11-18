@@ -1,8 +1,8 @@
 package org.codehaus.commons.compiler.jdk;
 
 import com.github.igorsuhorukov.codehaus.plexus.util.IOUtil;
-import org.github.suhorukov.CompilationResult;
-import org.github.suhorukov.JavaCompiler;
+import org.github.suhorukov.java.as.script.CompilationResult;
+import org.github.suhorukov.java.as.script.JavaCompiler;
 import org.junit.Assert;
 import org.junit.Test;
 

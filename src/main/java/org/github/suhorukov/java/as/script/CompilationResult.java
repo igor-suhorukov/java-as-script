@@ -1,4 +1,4 @@
-package org.github.suhorukov;
+package org.github.suhorukov.java.as.script;
 
 import org.codehaus.commons.compiler.jdk.SimpleClassPathCompiler;
 

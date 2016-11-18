@@ -1,7 +1,8 @@
-package org.github.suhorukov;
+package org.github.suhorukov.java.as.script;
 
 import com.github.igorsuhorukov.codehaus.plexus.util.IOUtil;
 import com.github.igorsuhorukov.url.handler.UniversalURLStreamHandlerFactory;
+import org.github.suhorukov.java.as.script.helper.Utils;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.net.URL.setURLStreamHandlerFactory;
@@ -18,9 +18,26 @@ import static java.net.URL.setURLStreamHandlerFactory;
 public class ScriptRunner {
 
     public static void main(String[] args) {
+        if(Boolean.getBoolean("generateMavenProjectAndExit")){
+            generateMavenProject(args);
+        } else {
+            runScript(args);
+        }
+    }
+
+    private static void runScript(String[] args) {
         try {
             new ScriptRunner().run(args);
         } catch (Throwable e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    private static void generateMavenProject(String[] args) {
+        try {
+            GenerateMavenProject.main(args);
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
@@ -71,7 +88,7 @@ public class ScriptRunner {
 
         ClassLoader compilerClassLoader = compilationResult.getCompiler().getClassLoader();
         if(compilationResult.getPublicClassName().isPresent()) {
-            String fullClassName = CompilerUtils.getFullClassName(compilationResult);
+            String fullClassName = Utils.getFullClassName(compilationResult);
             try {
                 invokeMainMethod(compilerClassLoader.loadClass(fullClassName), scriptArgs);
             } catch (NoSuchMethodException e){
