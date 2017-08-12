@@ -36,7 +36,7 @@ public class JavaCompiler {
     }
 
     private Set<String> parseDependencies(String src) {
-        Pattern dependencyPattern = Pattern.compile("^//dependency\\:(\\S+)$", Pattern.DOTALL);
+        Pattern dependencyPattern = Pattern.compile("^//dependency\\:(\\S+)\\s*$", Pattern.DOTALL);
         return Arrays.stream(src.split("\n"))
                 .map(line -> {
                     Matcher match = dependencyPattern.matcher(line);
